@@ -24,3 +24,36 @@ Hệ thống này cho phép người dùng **tìm kiếm đối tượng trong v
 ```bash
 pip install git+https://github.com/openai/CLIP.git
 pip install faiss-cpu flask opencv-python torch torchvision
+
+---
+
+## 🚀 Cách chạy
+# 1. Tạo và kích hoạt môi trường ảo:
+```bash
+# Tạo môi trường ảo (nếu chưa có)
+python -m venv venv
+
+# Kích hoạt môi trường
+# Trên macOS/Linux:
+source venv/bin/activate
+# Trên Windows:
+.\venv\Scripts\activate
+
+# 2. Cài đặt các thư viện phụ thuộc:
+```bash
+pip install -r requirements.txt
+
+# 3. Chạy Flask server:
+```bash
+python app.py
+
+# 4. Gửi video để xử lý:
+```bash
+curl -X POST http://localhost:5000/process_video \
+     -H "Content-Type: application/json" \
+     -d "{\"video_path\": \"data/videos/camera1.mp4\"}"
+
+# 5. Truy vấn tìm kiếm đối tượng:
+```bash
+curl "http://localhost:5000/search?query=a red motorcycle"
+
