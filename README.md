@@ -24,7 +24,3 @@ Hệ thống này cho phép người dùng **tìm kiếm đối tượng trong v
 ```bash
 pip install git+https://github.com/openai/CLIP.git
 pip install faiss-cpu flask opencv-python torch torchvision
-
-```bash
-pip install git+https://github.com/openai/CLIP.git
-pip install faiss-cpu flask opencv-python torch torchvision
