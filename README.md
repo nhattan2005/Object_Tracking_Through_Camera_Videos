@@ -6,7 +6,7 @@ Hệ thống này cho phép người dùng **tìm kiếm đối tượng trong v
 
 ## 🧠 Kiến trúc hệ thống
 
-![System Architecture](docs/system_diagram.png)
+![System Architecture](diagram.png)
 
 > **Ảnh: Sơ đồ hệ thống gồm 3 thành phần chính:**
 > 1. **Object Detection:** Trích xuất các đối tượng từ video bằng YOLO.
