@@ -44,32 +44,13 @@ pip install faiss-cpu flask opencv-python torch torchvision
 
 ## 🚀 Cách chạy
 
-1. **Tạo và kích hoạt môi trường ảo**:
-
-```bash
-# Tạo môi trường ảo
-python -m venv venv
-
-# Kích hoạt môi trường
-# Trên macOS/Linux:
-source venv/bin/activate
-# Trên Windows:
-.\venv\Scripts\activate
-```
-
-2. **Cài đặt các thư viện phụ thuộc**:
-
-```bash
-pip install -r requirements.txt
-```
-
-3. **Chạy Flask server**:
+1. **Chạy Flask server**:
 
 ```bash
 python app.py
 ```
 
-4. **Gửi video để xử lý bằng YOLO**:
+2. **Gửi video để xử lý bằng YOLO**:
 
 ```bash
 curl -X POST http://localhost:5000/process_video \
@@ -77,7 +58,7 @@ curl -X POST http://localhost:5000/process_video \
      -d '{"video_path": "data/videos/camera1.mp4"}'
 ```
 
-5. **Truy vấn tìm kiếm đối tượng bằng văn bản**:
+3. **Truy vấn tìm kiếm đối tượng bằng văn bản**:
 
 ```bash
 curl "http://localhost:5000/search?query=a red motorcycle"
@@ -127,18 +108,3 @@ object_search_backend/
 ├── metadata.json         # Thông tin mô tả từng ảnh object
 └── diagram.png           # Ảnh sơ đồ kiến trúc hệ thống
 ```
-
----
-
-## 💬 Liên hệ / Đóng góp
-
-Bạn có thể mở issue hoặc pull request để:
-- Thêm UI hiển thị kết quả.
-- Hỗ trợ multi-camera.
-- Gợi ý theo thời gian.
-
----
-
-**Lưu ý**:
-1. Lưu nội dung này thành file `README.md` trong thư mục gốc dự án.
-2. Đảm bảo ảnh `diagram.png` tồn tại (nếu tên ảnh khác, chỉnh sửa dòng Markdown tương ứng).
