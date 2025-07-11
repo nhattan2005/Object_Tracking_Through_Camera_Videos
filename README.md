@@ -4,17 +4,6 @@ Hệ thống này cho phép người dùng **tìm kiếm đối tượng trong v
 
 ---
 
-## 📌 Mục lục
-
-- [🧠 Kiến trúc hệ thống](#-kiến-trúc-hệ-thống)
-- [⚙️ Yêu cầu](#️-yêu-cầu)
-- [🚀 Cách chạy](#-cách-chạy)
-- [💻 API sử dụng](#-api-sử-dụng)
-- [🧪 Ví dụ sử dụng](#-ví-dụ-sử-dụng)
-- [📂 Cấu trúc thư mục](#-cấu-trúc-thư-mục)
-
----
-
 ## 🧠 Kiến trúc hệ thống
 
 ![System Architecture](docs/system_diagram.png)
