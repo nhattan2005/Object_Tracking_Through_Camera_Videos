@@ -1,4 +1,4 @@
-# Multi-Camera ReID Pipeline - Hướng dẫn chạy dự án
+# Multi-Camera ReID Pipeline
 
 ## Mục tiêu:
 
