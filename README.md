@@ -1,110 +1,106 @@
-# 🎯 Text-Based Object Retrieval in Surveillance Video
+# Multi-Camera ReID Pipeline - Hướng dẫn chạy dự án
 
-Hệ thống này cho phép người dùng **tìm kiếm đối tượng trong video giám sát bằng mô tả văn bản**, ví dụ: `"a red motorcycle"` hoặc `"a green chair"`. Hệ thống sử dụng **YOLO** để nhận diện đối tượng trong video, lưu trữ ảnh đối tượng vào cơ sở dữ liệu, và dùng **CLIP** để truy vấn văn bản gần giống về mặt ngữ nghĩa.
+## Mục tiêu:
 
----
+Xây dựng pipeline cho bài toán **Multi-camera ReID (Person Search)**:
 
-## 📌 Mục lục
-
-- [🧠 Kiến trúc hệ thống](#kiến-trúc-hệ-thống)
-- [⚙️ Yêu cầu](#yêu-cầu)
-- [🚀 Cách chạy](#cách-chạy)
-- [💻 API sử dụng](#api-sử-dụng)
-- [🧪 Ví dụ sử dụng](#ví-dụ-sử-dụng)
-- [📂 Cấu trúc thư mục](#cấu-trúc-thư-mục)
-- [💬 Liên hệ / Đóng góp](#liên-hệ--đóng-góp)
+- Dò theo đối tượng (Person Tracking) trên video.
+- Trích xuất đặc trưng CLIP.
+- Index với FAISS.
+- Tìm kiếm đối tượng theo text.
 
 ---
 
-## 🧠 Kiến trúc hệ thống
+## **1. Chuẩn bị môi trường**
 
-![System Architecture](diagram.png)
+### **Cài Python 3.10+**
 
-**Sơ đồ hệ thống gồm 3 thành phần chính:**
-1. **Object Detection**: Trích xuất các đối tượng từ video bằng YOLO.
-2. **Feature Indexing**: Sử dụng CLIP để mã hóa hình ảnh và lưu vào FAISS index.
-3. **Text Query**: Người dùng nhập mô tả văn bản → CLIP mã hóa → FAISS tìm kiếm ảnh gần nhất.
-
----
-
-## ⚙️ Yêu cầu
-
-- **Python**: >= 3.8
-- **Công cụ**: `pip` + `venv` (hoặc `conda`)
-- **Thư viện Python**:
+Tạo môi trường:
 
 ```bash
-pip install git+https://github.com/openai/CLIP.git
-pip install faiss-cpu flask opencv-python torch torchvision
+conda create -n mcmot python=3.10
+conda activate mcmot
 ```
-
-- **Tệp phụ thuộc** (nếu có): `requirements.txt`
 
 ---
 
-## 🚀 Cách chạy
+## **2. Chuẩn bị dữ liệu**
 
-1. **Chạy Flask server**:
+### **Folder dữ liệu video:**
+
+```
+D:/MCMOT/data/videos/
+    camera3.mp4
+    camera4.mp4
+```
+
+---
+
+## **3. Cách chạy pipeline**
+
+### **Bước 1: Chạy Flask API**
+
+File API: `app.py`
 
 ```bash
 python app.py
 ```
 
-2. **Gửi video để xử lý bằng YOLO**:
+API gồm 2 endpoint:
+
+- **/process\_video\_track**: tracking + extract feature + index.
+- **/search\_reid**: tìm kiếm bằng text.
+
+---
+
+### **Bước 2: Tracking và trích xuất đặc trưng**
+
+Gọi request bằng PowerShell hoặc cURL:
+
+#### Camera 3:
 
 ```bash
-curl -X POST http://localhost:5000/process_video \
-     -H "Content-Type: application/json" \
-     -d '{"video_path": "data/videos/camera1.mp4"}'
+Invoke-RestMethod -Uri http://127.0.0.1:5000/process_video_track `
+    -Method POST `
+    -Body '{"video_path": "D:/MCMOT/data/videos/camera3.mp4"}' `
+    -ContentType "application/json"
 ```
 
-3. **Truy vấn tìm kiếm đối tượng bằng văn bản**:
+#### Camera 4:
 
 ```bash
-curl "http://localhost:5000/search?query=a red motorcycle"
+Invoke-RestMethod -Uri http://127.0.0.1:5000/process_video_track `
+    -Method POST `
+    -Body '{"video_path": "D:/MCMOT/data/videos/camera4.mp4"}' `
+    -ContentType "application/json"
 ```
+
+Kết quả:
+
+- 2 video sẽ được tracking.
+- Đặc trưng CLIP sẽ được index vào **reid.index**.
+- File metadata lưu tại **reid\_metadata.json**.
 
 ---
 
-## 💻 API sử dụng
+### **Bước 3: Tìm kiếm ReID theo text**
 
-### `POST /process_video`
-- **Mô tả**: Trích xuất đối tượng từ video bằng YOLO, lưu metadata, và mã hóa vector bằng CLIP.
-- **Request body (JSON)**:
+Ví dụ:
 
-```json
-{
-  "video_path": "data/videos/camera1.mp4"
-}
+#### Tìm người mặc áo xanh:
+
+```bash
+Invoke-RestMethod -Uri "http://127.0.0.1:5000/search_reid?query=a person with green shirt&k=5"
 ```
 
-### `GET /search?query=your text`
-- **Mô tả**: Tìm các ảnh đối tượng gần nhất với mô tả văn bản.
-- **Query parameters**:
-  - `query`: Chuỗi mô tả đối tượng (bắt buộc).
-  - `k`: Số kết quả trả về (tùy chọn, mặc định: 5).
+#### Tìm người mặc áo cam:
 
----
-
-## 🧪 Ví dụ sử dụng
-
-- `"a red motorcycle"`: Trả về ảnh xe máy màu đỏ từ video.
-- `"a green chair"`: Trả về ảnh ghế màu xanh nếu có trong video.
-
----
-
-## 📂 Cấu trúc thư mục
-
+```bash
+Invoke-RestMethod -Uri "http://127.0.0.1:5000/search_reid?query=a child with orange shirt&k=5"
 ```
-object_search_backend/
-├── app.py                # Flask backend chính
-├── detect.py             # Trích xuất ảnh đối tượng từ video
-├── indexer.py            # Mã hóa ảnh bằng CLIP và lưu FAISS index
-├── search.py             # Tìm kiếm ảnh gần nhất theo query text
-├── data/
-│   ├── videos/           # Video đầu vào
-│   └── objects/          # Ảnh cắt từ video
-├── faiss.index           # Chỉ mục vector ảnh (dạng FAISS)
-├── metadata.json         # Thông tin mô tả từng ảnh object
-└── diagram.png           # Ảnh sơ đồ kiến trúc hệ thống
-```
+
+Kết quả trả về:
+
+- Danh sách bounding box, frame, path ảnh crop.
+- Video tương ứng.
+
