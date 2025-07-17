@@ -1,35 +1,29 @@
+# app.py (bổ sung endpoint mới)
+
 from flask import Flask, request, jsonify
-from detect import extract_objects
-from indexer import index_images
-from search import search_text
+from my_tracker import extract_and_track
+from reid_indexer import index_reid
+from search_reid import search_text_reid
 import os
 
 os.environ["KMP_DUPLICATE_LIB_OK"] = "TRUE"
 
 app = Flask(__name__)
 
-@app.route("/process_video", methods=["POST"])
-def process_video():
+@app.route("/process_video_track", methods=["POST"])
+def process_video_track():
     video_path = request.json.get("video_path")
-    metadata = extract_objects(video_path)
-    index_images(metadata)
-    return jsonify({"message": "Video processed", "objects": len(metadata)})
+    metadata = extract_and_track(video_path)
+    print(f"[DEBUG] Extracted {len(metadata)} objects with tracking")
+    index_reid(metadata)
+    return jsonify({"message": "Video processed with tracking", "objects": len(metadata)})
 
-@app.route("/search", methods=["GET"])
-def search():
+@app.route("/search_reid", methods=["GET"])
+def search_reid():
     query = request.args.get("query")
     k = int(request.args.get("k", 5))
-
-    print(f"[SEARCH] Query: {query}")
-    try:
-        results = search_text(query, k)
-        print(f"[SEARCH] Found {len(results)} results")
-        return jsonify(results)
-    except Exception as e:
-        import traceback
-        traceback.print_exc()  # <--- thêm dòng này để hiện lỗi chi tiết
-        return jsonify({"error": str(e)}), 500
-
+    results = search_text_reid(query, k)
+    return jsonify(results)
 
 if __name__ == "__main__":
     app.run(debug=False)
