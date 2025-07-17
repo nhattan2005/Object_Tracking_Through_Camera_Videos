@@ -18,25 +18,50 @@ Xây dựng pipeline cho bài toán **Multi-camera ReID (Person Search)**:
 Tạo môi trường:
 
 ```bash
-conda create -n mcmot python=3.10
-conda activate mcmot
+conda create -n mcmot3 python=3.10
+conda activate mcmot3
+```
+
+### **Cài đặt thư viện:**
+
+```bash
+pip install -r requirements.txt
 ```
 
 ---
 
-## **2. Chuẩn bị dữ liệu**
+## **2. Clone và cài đặt ByteTrack**
+
+Pipeline sử dụng **BYTETracker** từ ByteTrack để thực hiện Multi-Object Tracking.
+
+### **Bước 1: Clone ByteTrack**
+
+```bash
+git clone https://github.com/ifzhang/ByteTrack.git
+```
+
+### **Bước 2: Cài đặt ByteTrack**
+
+```bash
+cd ByteTrack
+pip install -r requirements.txt
+```
+
+---
+
+## **3. Chuẩn bị dữ liệu**
 
 ### **Folder dữ liệu video:**
 
 ```
-D:/MCMOT/data/videos/
+MCMOT/data/videos/
     camera3.mp4
     camera4.mp4
 ```
 
 ---
 
-## **3. Cách chạy pipeline**
+## **4. Cách chạy pipeline**
 
 ### **Bước 1: Chạy Flask API**
 
@@ -103,4 +128,16 @@ Kết quả trả về:
 
 - Danh sách bounding box, frame, path ảnh crop.
 - Video tương ứng.
+
+---
+
+## **5. Cấu trúc file chính**
+
+| File              | Chức năng                       |
+| ----------------- | ------------------------------- |
+| `app.py`          | API Flask                       |
+| `my_tracker.py`   | Tracking + extract CLIP feature |
+| `reid_indexer.py` | FAISS index                     |
+| `search_reid.py`  | Tìm kiếm bằng text              |
+
 
